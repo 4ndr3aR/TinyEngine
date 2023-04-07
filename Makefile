@@ -16,6 +16,7 @@ CF = -Wfatal-errors -O3
 UNAME := $(shell uname)
 ifeq ($(UNAME), Linux)			#Detect GNU/Linux
 TINYOS = -lX11 -lGL
+INCPATH = /tmp/include
 endif
 ifeq ($(UNAME), Darwin)			#Detext MacOS
 INCPATH = /opt/homebrew/include

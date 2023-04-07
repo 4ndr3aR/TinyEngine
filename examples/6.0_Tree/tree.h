@@ -1,3 +1,5 @@
+#include <TinyEngine/color>
+
 struct Branch{
 
   int ID = 0;         //For Leaf Hashing
@@ -236,7 +238,7 @@ std::function<void(std::vector<glm::mat4>&, bool)> addLeaves = [](std::vector<gl
 
       for(int i = 0; i < leafcount; i++){
         //Hashed Random Displace
-        glm::vec3 d = glm::vec3(hashrand(b->ID+i), hashrand(b->ID+i+leafcount), hashrand(b->ID+i+2*leafcount))-glm::vec3(0.5);
+        glm::vec3 d = glm::vec3(color::hashrand(b->ID+i), color::hashrand(b->ID+i+leafcount), color::hashrand(b->ID+i+2*leafcount))-glm::vec3(0.5);
         d = d * glm::vec3(leafspread[0], leafspread[1], leafspread[2]);
 
         glm::mat4 model = glm::translate(glm::mat4(1.0), pos+d);
