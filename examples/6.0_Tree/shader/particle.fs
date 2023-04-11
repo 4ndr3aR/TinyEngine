@@ -60,6 +60,6 @@ void main(void) {
 
   vec4 _light = vec4(1.0);
   if(selfshadow) _light = directionalLight();
-  fragColor = _light*leafcolor;
+  fragColor = _light*color;
 
 }

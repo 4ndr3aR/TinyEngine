@@ -2,7 +2,8 @@ bool drawwire = false;
 bool drawtree = true;
 bool drawleaf = true;
 
-float leafcolor[3] = {0.13, 0.35, 0.05};
+//float leafcolor[3] = {0.13, 0.35, 0.05};
+float leafcolor[3] = {1.00, 0.00, 0.00};
 float treecolor[3] = {0.25, 0.13, 0.05};
 float wirecolor[3] = {0.00, 0.00, 0.00};
 float backcolor[3] = {0.80, 0.80, 0.80};
@@ -27,7 +28,7 @@ bool conservearea = true;
 
 bool drawshadow = true;
 bool selfshadow = true;
-bool leafshadow = true;
+bool leafshadow = false;
 glm::vec3 lightpos = glm::vec3(50);
 glm::mat4 bias = glm::mat4(
     0.5, 0.0, 0.0, 0.0,

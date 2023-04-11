@@ -137,10 +137,13 @@ int main( int argc, char* args[] ) {
 
 			particleShader.use();
 			particleShader.texture("spriteTexture", tex);
+			particleShader.texture("imageTexture", tex);
 			particleShader.uniform("projectionCamera", cam::vp);
 			particleShader.uniform("ff", glm::rotate(glm::mat4(1.0f), glm::radians(180-cam::rot), glm::vec3(0,1,0)));
-			particleShader.uniform("leafcolor", glm::vec4(leafcolor[0], leafcolor[1], leafcolor[2], leafopacity));
+			//particleShader.uniform("leafcolor", glm::vec4(leafcolor[0], leafcolor[1], leafcolor[2], leafopacity));
+			//particleShader.uniform("leafcolor", tex);
 			particleShader.uniform("lightcolor", lightcolor);
+			//particleShader.uniform("model", flat.model);
 
 			particleShader.uniform("selfshadow", selfshadow);
 			if(selfshadow){
@@ -163,7 +166,7 @@ int main( int argc, char* args[] ) {
 	Tiny::loop([&](){ /* ... */
 
 		if(autorotate)
-			cam::pan(0.5f);
+			cam::pan(0.1f);
 
 		if(!paused)
 			root->grow(growthrate);
