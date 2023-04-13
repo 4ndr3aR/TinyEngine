@@ -14,7 +14,7 @@ float treeopacity = 1.0;
 float treescale[2] = {15.0f, 5.0f};
 
 int ringsize = 12;
-int leafcount = 10;
+int leafcount = 50;
 float leafsize = 5.0;
 float taper = 0.6;
 float leafspread[3] = {50.0, 50.0, 50.0};
