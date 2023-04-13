@@ -1,5 +1,15 @@
 #include <TinyEngine/color>
 
+#include <random>
+
+#include <boost/log/trivial.hpp>
+#include <boost/log/expressions.hpp>
+
+void init_logging()
+{
+   boost::log::core::get()->set_filter(boost::log::trivial::severity >= boost::log::trivial::info); 
+} 
+
 struct Branch{
 
   int ID = 0;         //For Leaf Hashing
@@ -226,15 +236,29 @@ void construct(Buffer& positions, Buffer& normals, Buffer& colors, Buffer& indic
 };
 
 //Construct Leaf Particle System from Tree Data
-std::function<void(std::vector<glm::mat4>&, bool)> addLeaves = [](std::vector<glm::mat4>& p, bool face){
+std::function<void(std::vector<glm::mat4>&, std::vector<glm::uvec3>&, bool)> addLeaves = [](std::vector<glm::mat4>& p, std::vector<glm::uvec3>& a, bool face){
+  BOOST_LOG_TRIVIAL(trace) << "Entering addLeaves()..." << std::endl;
   p.clear();
 
+  std::random_device rd;                  // Will be used to obtain a seed for the random number engine
+  std::mt19937 gen(rd());                 // Standard mersenne_twister_engine seeded with rd()
+  std::uniform_int_distribution<> leaf_angle_rng(0, 45);
+
+  //bool gen_angles = (a.size() == 0);      // Generate leaf u,v,w angles only once (if this vector is empty)
+
   //Explore the Tree and Add Leaves!
-  std::function<void(Branch*, glm::vec3)> addLeaf = [&](Branch* b, glm::vec3 pos){
+  std::function<void(Branch*, glm::vec3)> addLeaf = [&](Branch* b, glm::vec3 pos)
+  {
+    BOOST_LOG_TRIVIAL(trace) << "Entering addLeaf()..." << std::endl;
 
-    if(b->leaf){
+    if (b->leaf)
+    {
 
-      if(b->depth < leafmindepth) return;
+      if (b->depth < leafmindepth)
+      {
+        BOOST_LOG_TRIVIAL(trace) << "Departing addLeaf() very soon..." << std::endl;
+        return;
+      }
 
       for(int i = 0; i < leafcount; i++){
         //Hashed Random Displace
@@ -242,6 +266,27 @@ std::function<void(std::vector<glm::mat4>&, bool)> addLeaves = [](std::vector<gl
         d = d * glm::vec3(leafspread[0], leafspread[1], leafspread[2]);
 
         glm::mat4 model = glm::translate(glm::mat4(1.0), pos+d);
+
+        if (a.size() == 0 || a.size()-1 < p.size())                                     // Generate leaf u,v,w angles only if we don't have already generated them
+        {
+                BOOST_LOG_TRIVIAL(debug) << "GEN len(p) = " << p.size() << " - len(a) = " << a.size() << std::endl;
+                uint8_t u = leaf_angle_rng(gen);
+                uint8_t v = leaf_angle_rng(gen);
+                uint8_t w = leaf_angle_rng(gen);
+                glm::uvec3 angles = glm::uvec3(u, v, w);
+                a.push_back(angles);
+                BOOST_LOG_TRIVIAL(debug) << "GEN adding angle: " << +u << " - " << +v << " - " << +w << std::endl;
+        }
+        else
+                BOOST_LOG_TRIVIAL(debug) << "NOGEN len(p) = " << p.size() << " - len(a) = " << a.size() << std::endl;
+
+        auto ang = a[p.size()];
+        BOOST_LOG_TRIVIAL(debug) << "BOTH ang = " << ang.x << " - " << ang.y << " - " << ang.z << " --- len(p) = " << p.size() << " - len(a) = " << a.size() << std::endl;
+
+        model = glm::rotate(model, float(ang.x), glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::rotate(model, float(ang.y), glm::vec3(0.0f, 1.0f, 0.0f)); 
+        model = glm::rotate(model, float(ang.z), glm::vec3(0.0f, 0.0f, 1.0f)); 
+
         p.push_back(glm::scale(model, glm::vec3(leafsize)));
 
       }
@@ -256,5 +301,8 @@ std::function<void(std::vector<glm::mat4>&, bool)> addLeaves = [](std::vector<gl
   };
 
   addLeaf(root, glm::vec3(0.0));
-
+  /*
+  if (p.size() > 100) 
+        Tiny::quit(); 
+  */
 };

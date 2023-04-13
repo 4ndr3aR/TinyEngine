@@ -3,11 +3,12 @@
 
 CC = g++ -std=c++17
 CF = -Wfatal-errors -O
-LF = -I$(HOME)/.local/include -L$(HOME)/.local/lib
+LF = -I /tmp/include -I$(HOME)/.local/include -L$(HOME)/.local/lib
+EXTRA_FLAGS = -O0 -g3 -DBOOST_LOG_DYN_LINK
 
 # General Linking
 
-TINYLINK = -lpthread -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lGLEW -lboost_system -lboost_filesystem
+TINYLINK = -lpthread -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf -lGLEW -lboost_system -lboost_log -lboost_filesystem
 
 # OS Specific Linking
 
@@ -26,7 +27,7 @@ CC = g++-12 -std=c++17
 endif
 
 all: main.cpp
-			$(CC) main.cpp $(CF) $(LF) -lTinyEngine $(TINYLINK) -o main
+			$(CC) $(EXTRA_FLAGS) main.cpp $(CF) $(LF) -lTinyEngine $(TINYLINK) -o main
 
 DAT = shader			#data directory to embed
 .PHONY: embedded

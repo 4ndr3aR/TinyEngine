@@ -8,7 +8,11 @@
 
 #include "model.h"
 
-int main( int argc, char* args[] ) {
+#include <random>
+
+int main( int argc, char* args[] )
+{
+        init_logging();
 
 	Tiny::view.lineWidth = 1.0f;
 
@@ -51,10 +55,11 @@ int main( int argc, char* args[] ) {
 	treemesh.bind<glm::vec4>("in_Color", &colors);
 	treemesh.index(&indices);
 
-	Square3D flat;																	//Geometry for Particle System
+	Square3D flat;														//Geometry for Particle System
 
 	std::vector<glm::mat4> leaves;
-	addLeaves(leaves, true);												//Generate the model matrices
+	std::vector<glm::uvec3> leaf_angles;
+	addLeaves(leaves, leaf_angles, true);											//Generate the model matrices
 
 	Buffer models(leaves);
 	Instance particle(&flat);												//Make Particle System
@@ -88,7 +93,8 @@ int main( int argc, char* args[] ) {
 			particledepth.use();
 			particledepth.uniform("dvp", lproj*lview);
 			particledepth.texture("spriteTexture", tex);
-			addLeaves(leaves, false);						//Generate the model matrices
+			//addLeaves(leaves, false);						//Generate the model matrices
+	                addLeaves(leaves, leaf_angles, true);					//Generate the model matrices
 			models.fill<glm::mat4>(leaves);
 
 			particle.render(GL_TRIANGLE_STRIP); 		//Render Particle System
@@ -153,11 +159,11 @@ int main( int argc, char* args[] ) {
 			}
 
 			particleShader.uniform("lookDir", cam::look - cam::pos);
-			addLeaves(leaves, true);
+			//addLeaves(leaves, true);
+	                addLeaves(leaves, leaf_angles, true);						//Generate the model matrices
 			models.fill<glm::mat4>(leaves);
 			particle.SIZE = leaves.size();
-			particle.render(GL_TRIANGLE_STRIP); //Render Particle System
-
+			particle.render(GL_TRIANGLE_STRIP);                                             //Render Particle System
 		}
 
 	};
