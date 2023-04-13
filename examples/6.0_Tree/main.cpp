@@ -66,8 +66,10 @@ int main( int argc, char* args[] )
 	particle.bind<glm::mat4>("in_Model", &models);  //Add Matrices
 
 	Texture tex(image::load("leaf.png"));
+	Texture barktex(image::load("bark.png"));
 
 	Shader particleShader({"shader/particle.vs", "shader/particle.fs"}, {"in_Quad", "in_Tex", "in_Model"});
+	Shader barkShader({"shader/bark.vs", "shader/bark.fs"}, {"in_Quad", "in_Tex", "in_Model"});
 	Shader defaultShader({"shader/default.vs", "shader/default.fs"}, {"in_Position", "in_Normal"});
 	Shader depth({"shader/depth.vs", "shader/depth.fs"}, {"in_Position"});
 	Shader particledepth({"shader/particledepth.vs", "shader/particledepth.fs"}, {"in_Quad", "in_Tex", "in_Model"});
@@ -129,6 +131,12 @@ int main( int argc, char* args[] )
 			if(drawtree){
 				defaultShader.uniform("drawcolor", glm::vec4(treecolor[0], treecolor[1], treecolor[2], treeopacity));
 				defaultShader.uniform("wireframe", false);
+			        //defaultShader.texture("spriteTexture", barktex);
+			        //treemesh.render(GL_TRIANGLE_STRIP);
+			        //defaultShader.render(GL_TRIANGLE_STRIP);
+				//barkShader.use();
+				//barkShader.texture("spriteTexture", barktex);
+				//barkShader.texture("imageTexture", barktex);
 				treemesh.render(GL_TRIANGLES);
 			}
 

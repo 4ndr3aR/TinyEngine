@@ -3,7 +3,7 @@
 
 CC = g++ -std=c++17
 CF = -Wfatal-errors -O
-LF = -I$(HOME)/.local/include -L$(HOME)/.local/lib
+LF = -I/tmp/include -I$(HOME)/.local/include -L$(HOME)/.local/lib
 
 # General Linking
 
