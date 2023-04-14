@@ -21,10 +21,14 @@ float leafspread[3] = {50.0, 50.0, 50.0};
 
 float growthrate = 1.0;
 float passratio = 0.3;
-float splitdecay = 1E-2;
-float directedness = 0.5;
+float splitdecay = 1E-5;                // one of the parameters for growth: 1E-5 = tall
+//float splitdecay = 0.5;               // 0.5 = very short and "compact"
+//float directedness = 0.5;             // wider vs. narrow foliage?
+float directedness = 99.9;
 int localdepth = 2;
 bool conservearea = true;
+
+float fastigiate = 1.0f;                // https://en.wiktionary.org/wiki/fastigiate - how "directed towards the top" branches are... 1.0f normal tree, 5.0f-10.0f cypress
 
 bool drawshadow = true;
 bool selfshadow = true;
@@ -78,6 +82,7 @@ Handle interfaceFunc = [](){
         ImGui::DragFloat("Ratio", &root->ratio, 0.01f, 0.0f, 1.0f);
         ImGui::DragFloat("Size", &root->splitsize, 0.1f, 0.1f, 5.0f);
         ImGui::DragFloat("Decay", &splitdecay, 0.001f, 0.0f, 1.0f);
+        ImGui::DragFloat("Fastigiate", &fastigiate, 0.001f, 0.0f, 10.0f);
 
         ImGui::Text("Growth Direction");
         ImGui::DragFloat("Spread", &root->spread, 0.01f, 0.0f, 5.0f);
@@ -105,14 +110,14 @@ Handle interfaceFunc = [](){
         ImGui::ColorEdit3("Fill", treecolor);
         ImGui::ColorEdit3("Wire", wirecolor);
         ImGui::DragFloat("Opacity", &treeopacity, 0.01f, 0.0f, 1.0f);
-        ImGui::DragFloat2("Scale", treescale, 0.01f, 0.1f, 50.0f);
-        ImGui::DragFloat("Taper", &taper, 0.01f, 0.0f, 1.0f);
+        ImGui::DragFloat2("Scale", treescale, 0.01f, 0.1f, 50.0f);      // Tree "height" and trunk/branch "thickness"
+        ImGui::DragFloat("Taper", &taper, 0.01f, 0.0f, 1.0f);           // should every trunk component be a cylinder or a cone?
 
         ImGui::Checkbox("Draw", &drawtree); ImGui::SameLine();
         ImGui::Checkbox("Wire", &drawwire); ImGui::SameLine();
         ImGui::Checkbox("Shade", &drawshadow);
 
-        ImGui::DragInt("Mesh", &ringsize, 1, 3, 12);
+        ImGui::DragInt("Mesh", &ringsize, 1, 3, 12);                    // Number of polygons (=quality of the mesh) for trunk and branches
 
         ImGui::EndTabItem();
       }

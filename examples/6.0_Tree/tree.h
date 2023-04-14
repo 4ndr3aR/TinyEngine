@@ -103,8 +103,8 @@ void Branch::split(){
   glm::vec3 M = -1.0f*N;                            //Reflection
 
   float flip = (rand()%2)?1.0:-1.0; //Random Direction Flip
-  A->dir = glm::normalize( glm::mix(flip*spread*N, dir,     ratio) );
-  B->dir = glm::normalize( glm::mix(flip*spread*M, dir, 1.0-ratio) );
+  A->dir = glm::normalize( glm::mix(flip*spread*N, dir*fastigiate,     ratio) );
+  B->dir = glm::normalize( glm::mix(flip*spread*M, dir*fastigiate, 1.0-ratio) );
 
 }
 
