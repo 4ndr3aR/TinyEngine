@@ -10,6 +10,29 @@
 
 #include <random>
 
+#include <chrono>
+#include <ctime>
+#include <iomanip>
+#include <sstream>
+
+std::string curr_date_time(bool compact=true)
+{
+        auto now = std::chrono::system_clock::now();
+        std::time_t time = std::chrono::system_clock::to_time_t(now);
+        std::tm timeinfo = *std::localtime(&time);
+
+        // Format the date and time into a string
+        std::ostringstream oss;
+        if (compact)
+                oss << std::put_time(&timeinfo, "%Y%m%d-%H%M%S");
+        else
+                oss << std::put_time(&timeinfo, "%d-%m-%Y_%H-%M-%S");
+
+        std::string currdatetime = oss.str();
+
+        return currdatetime;
+}
+
 int main( int argc, char* args[] )
 {
         init_logging();
@@ -176,6 +199,35 @@ int main( int argc, char* args[] )
 
 	};
 
+
+
+        const int ffmpeg_w = 1200;
+        const int ffmpeg_h = 800;
+
+
+        std::string video_out = "/tmp/output-" + curr_date_time() + ".mp4";
+
+        // Create a vector to store the frames
+        std::vector<unsigned char> pixels(ffmpeg_w * ffmpeg_h * 3);
+
+        // ffmpeg command to convert images to video
+        //std::string ffmpeg_cmd = "ffmpeg -y -s " + std::to_string(ffmpeg_w) + "x" + std::to_string(ffmpeg_h) + " -pixel_format bgr24 -r 60 -f image2pipe -vcodec ppm -i - -vcodec libx264 -preset ultrafast -pix_fmt yuv420p -crf 1 -threads 0 -bf 0 " + std::string(video_out);
+        //std::string ffmpegCmd = "ffmpeg -f rawvideo -pix_fmt rgb24 -s 1200x800 -i - -f mpegts -codec:v mpeg1video -s 1200x800 -b:v 1000k -bf 0 -muxdelay 0.001 tcp://localhost:8080";
+        //std::string ffmpeg_cmd = "ffmpeg -f rawvideo -pix_fmt rgb24 -s 1200x800 -i - -f mp4 -codec:v libx264 -preset ultrafast -crf 23 -pix_fmt yuv420p output.mp4";
+        //std::string ffmpeg_cmd = "ffmpeg -y -f rawvideo -pix_fmt rgb24 -s 1200x800 -i - -vf transpose=2 -f mp4 -codec:v libx264 -preset ultrafast -crf 23 -pix_fmt yuv420p output.mp4";
+        //std::string ffmpeg_cmd = "ffmpeg -y -f rawvideo -pix_fmt rgb24 -s 1200x800 -i - -vf vflip -f mp4 -codec:v libx264 -preset ultrafast -crf 23 -pix_fmt yuv420p output.mp4";
+        std::string ffmpeg_cmd = "ffmpeg -y -f rawvideo -pix_fmt rgb24 -s " + std::to_string(ffmpeg_w) + "x" + std::to_string(ffmpeg_h) + " -i - -vf vflip -f mp4 -codec:v libx264 -preset ultrafast -crf 23 -pix_fmt yuv420p " + video_out;
+
+        BOOST_LOG_TRIVIAL(info) << "Sending command line to ffmpeg: " << ffmpeg_cmd << std::endl;
+
+        // Create a pipe for ffmpeg
+        FILE *pipe = popen(ffmpeg_cmd.c_str(), "w");
+        if (!pipe)
+        {
+                std::cerr << "Error opening pipe to ffmpeg command" << std::endl;
+                return -1;
+        }
+
 	//Loop over Stuff
 	Tiny::loop([&](){ /* ... */
 
@@ -191,7 +243,22 @@ int main( int argc, char* args[] )
 
 		models.fill<glm::mat4>(leaves);
 
+                // Read the pixels from the framebuffer
+                glReadPixels(0, 0, ffmpeg_w, ffmpeg_h, GL_RGB, GL_UNSIGNED_BYTE, &pixels[0]);
+
+                BOOST_LOG_TRIVIAL(debug) << "writing bytes to ffmpeg: " << pixels.size() << std::endl;
+
+                // Write the pixels to the pipe
+                //fwrite(&pixels[0], sizeof(unsigned char), pixels.size(), pipe);
+                if (fwrite(pixels.data(), sizeof(unsigned char), pixels.size(), pipe) != pixels.size())
+                {
+                        std::cerr << "Error sending image buffer to ffmpeg" << std::endl;
+                        //break;
+                }
 	});
+
+        // Close the ffmpeg pipe
+        pclose(pipe);
 
 	//Get rid of this thing!
 	delete root;
