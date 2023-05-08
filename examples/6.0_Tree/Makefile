@@ -2,7 +2,7 @@
 # Compiler Configuration
 
 CC = g++ -std=c++17
-CF = -Wfatal-errors -O
+CF = -Wfatal-errors
 LF = -I /tmp/include -I$(HOME)/.local/include -L$(HOME)/.local/lib
 EXTRA_FLAGS = -O0 -g3 -DBOOST_LOG_DYN_LINK
 

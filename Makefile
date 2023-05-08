@@ -9,7 +9,7 @@ INCPATH = $(HOME)/.local/include
 
 # Compilation Settings
 CC = g++ -std=c++17
-CF = -Wfatal-errors -O3
+CF = -Wfatal-errors -O0 -g3
 
 # MacOS: Dependencies install with homegrew
 
