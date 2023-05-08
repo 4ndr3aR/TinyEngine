@@ -37,9 +37,17 @@ int main( int argc, char* args[] )
 {
         init_logging();
 
+        std::cout << "asdf" << std::endl;
+	Tiny::view.windowed = false;
 	Tiny::view.lineWidth = 1.0f;
 
+        std::cout << "qwer" << std::endl;
+	Tiny::view.windowed = false;
+	Tiny::view.enabled = false;
 	Tiny::window("Procedural Tree", 1200, 800);
+	//Tiny::view.windowed = false;
+	//Tiny::view.enabled = false;
+        std::cout << "poiu" << std::endl;
 	cam::look = glm::vec3(0, 100, 0);
 	cam::far = 2000.0f;
 	cam::roty = 25.0f;
