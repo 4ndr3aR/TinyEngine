@@ -1,6 +1,9 @@
 #include "view.hpp"
 
 bool View::init(std::string _name, int W, int H){
+  std::cout << "calling View::init..." << std::endl;
+  std::cout << "View::windowed: " << windowed << std::endl;
+  std::cout << "View::enabled : " << enabled  << std::endl;
   enabled = windowed;
   WIDTH = W; HEIGHT = H;
 
@@ -11,35 +14,47 @@ bool View::init(std::string _name, int W, int H){
 
   //Initialize the Window and Context
   Uint32 windowflags = SDL_WINDOW_OPENGL;
-  if(!windowed) windowflags = windowflags | SDL_WINDOW_HIDDEN;
+  //Uint32 windowflags =SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP;
+  if(!windowed) windowflags = SDL_WINDOW_HIDDEN | SDL_WINDOW_BORDERLESS | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_FOREIGN;
+  windowflags |= SDL_WINDOW_HIDDEN;
 
   gWindow = SDL_CreateWindow(_name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, windowflags);
-  if( gWindow == NULL ){
+  if( gWindow == NULL )
+  {
     printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );
     return false;
   }
   SDL_SetWindowResizable(gWindow, SDL_TRUE);
 
-  gContext = SDL_GL_CreateContext(gWindow);
-  if( gContext == NULL ){
-    printf( "Context could not be created! SDL_Error: %s\n", SDL_GetError() );
-    return false;
+  std::cout << "win: " << windowed << std::endl;
+  std::cout << "ena: " << enabled  << std::endl;
+  if (windowed || enabled || true)
+  {
+    std::cout << "maporcozzio: " << windowed << std::endl;
+    gContext = SDL_GL_CreateContext(gWindow);
+    if( gContext == NULL ){
+      printf( "Context could not be created! SDL_Error: %s\n", SDL_GetError() );
+      return false;
+    }
   }
 
   SDL_GL_SetSwapInterval(vsync);
   glewExperimental = GL_TRUE;     //Launch GLEW
   glewInit();
 
-  IMGUI_CHECKVERSION();           //Setup ImGUI
-  ImGui::CreateContext();
-  io = ImGui::GetIO(); (void)io;
-  ImGui_ImplSDL2_InitForOpenGL(gWindow, gContext);
-  #ifndef TINYENGINE_COMPATIBILITY
-  ImGui_ImplOpenGL3_Init("#version 330 core");
-  #else
-  ImGui_ImplOpenGL3_Init("#version 130");
-  #endif
-  ImGui::StyleColorsCustom();
+  if (windowed || enabled)
+  {
+    IMGUI_CHECKVERSION();           //Setup ImGUI
+    ImGui::CreateContext();
+    io = ImGui::GetIO(); (void)io;
+    ImGui_ImplSDL2_InitForOpenGL(gWindow, gContext);
+    #ifndef TINYENGINE_COMPATIBILITY
+    ImGui_ImplOpenGL3_Init("#version 330 core");
+    #else
+    ImGui_ImplOpenGL3_Init("#version 130");
+    #endif
+    ImGui::StyleColorsCustom();
+  }
 
   #ifndef TINYENGINE_COMPATIBILITY
   if(antialias)
@@ -69,9 +84,11 @@ bool View::init(std::string _name, int W, int H){
 void View::quit(){
   ImGui_ImplOpenGL3_Shutdown();   //Shutdown ImGUI
   ImGui_ImplSDL2_Shutdown();
-  ImGui::DestroyContext();
-
-  SDL_GL_DeleteContext( gContext );
+  if (windowed || enabled)
+  {
+    ImGui::DestroyContext();
+    SDL_GL_DeleteContext( gContext );
+  }
   SDL_DestroyWindow( gWindow );
 }
 

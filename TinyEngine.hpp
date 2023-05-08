@@ -88,7 +88,9 @@ bool init(){
 
   signal(SIGINT, &sighandler);
 
-  if(!view.windowed && !view.init("TinyEngine OpenGL Context", 0, 0)){ //Open a Dummy Window
+  std::cout << "init() - view.windowed: " << view.windowed << std::endl;
+  if(!view.windowed && !view.init("TinyEngine OpenGL Context", 0, 0))   //Open a Dummy Window
+  {
     std::cout<<"Failed to launch OpenGL Context"<<std::endl;
     return false;
   }
@@ -97,9 +99,11 @@ bool init(){
 
 }
 
-bool window(std::string windowName, int width, int height){ //Open a window
+bool window(std::string windowName, int width, int height)              // Open a window or a dummy one
+{
 
-  view.windowed = true;
+  // view.windowed = true;
+  std::cout << "window() - view.windowed: " << view.windowed << std::endl;
 
   if(!Tiny::init())
     return false;
