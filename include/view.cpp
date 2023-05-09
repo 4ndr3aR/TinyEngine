@@ -2,6 +2,7 @@
 
 bool View::init(std::string _name, int W, int H){
   std::cout << "calling View::init..." << std::endl;
+  windowed = true;
   std::cout << "View::windowed: " << windowed << std::endl;
   std::cout << "View::enabled : " << enabled  << std::endl;
   enabled = windowed;
@@ -15,8 +16,9 @@ bool View::init(std::string _name, int W, int H){
   //Initialize the Window and Context
   Uint32 windowflags = SDL_WINDOW_OPENGL;
   //Uint32 windowflags =SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN_DESKTOP;
-  if(!windowed) windowflags = SDL_WINDOW_HIDDEN | SDL_WINDOW_BORDERLESS | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_FOREIGN;
-  windowflags |= SDL_WINDOW_HIDDEN;
+  //if(!windowed) windowflags = SDL_WINDOW_HIDDEN | SDL_WINDOW_BORDERLESS | SDL_WINDOW_FULLSCREEN | SDL_WINDOW_FOREIGN;
+  if(!windowed) windowflags = SDL_WINDOW_HIDDEN;
+  //windowflags |= SDL_WINDOW_HIDDEN;
 
   gWindow = SDL_CreateWindow(_name.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, windowflags);
   if( gWindow == NULL )

@@ -42,8 +42,8 @@ int main( int argc, char* args[] )
 	Tiny::view.lineWidth = 1.0f;
 
         std::cout << "qwer" << std::endl;
-	Tiny::view.windowed = false;
-	Tiny::view.enabled = false;
+	Tiny::view.windowed = true;
+	Tiny::view.enabled = true;
 	Tiny::window("Procedural Tree", 1200, 800);
 	//Tiny::view.windowed = false;
 	//Tiny::view.enabled = false;
