@@ -9,11 +9,14 @@
 #include <GL/glew.h>
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <SDL2/SDL_opengl.h>
 
 
+/*
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
+*/
 
 //#include <GL/glext.h>
 
@@ -23,12 +26,14 @@ PFNGLBINDFRAMEBUFFEREXTPROC glBindFramebuffer = (PFNGLBINDFRAMEBUFFEREXTPROC)glX
 PFNGLFRAMEBUFFERTEXTURE2DEXTPROC glFramebufferTexture2D = (PFNGLFRAMEBUFFERTEXTURE2DEXTPROC)glXGetProcAddress((const GLubyte*)"glFramebufferTexture2DEXT");
 */
 
+/*
 struct stb_image_t
 {
 	unsigned char* data;
 	int width, height;	// Image dimensions
 	int channels;		// Number of color channels
 };
+*/
 
 void control_loop(bool& running)
 {
@@ -129,6 +134,7 @@ glUniform1i(tex_loc, 0);
 }
 
 
+/*
 stb_image_t load_stb_image(std::string fn)
 {
     // Load the image using stb_image
@@ -150,7 +156,7 @@ stb_image_t load_stb_image(std::string fn)
 
     return image;
 }
-
+*/
 
 std::string to_0x_hex_str(int i)
 {
@@ -161,7 +167,7 @@ std::string to_0x_hex_str(int i)
 
 int main(int argc, char** argv)
 {
-    bool headless = false;
+    bool headless = true;
     int xres = 1920;
     int yres = 1080;
 
@@ -174,6 +180,8 @@ int main(int argc, char** argv)
 	window = SDL_CreateWindow("Headless", 0, 0, xres, yres, SDL_WINDOW_HIDDEN | SDL_WINDOW_OPENGL);
     else
 	window = SDL_CreateWindow("Headless", 0, 0, xres, yres, SDL_WINDOW_FULLSCREEN | SDL_WINDOW_OPENGL);
+
+/*
 
     // Create an OpenGL context
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
@@ -242,9 +250,10 @@ std::cout << "++++++++++++++" << std::endl;
     //GLuint fbo;
     //glGenFramebuffers(1, &fbo);
     //glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+*/
 
 
-    stb_image_t image = load_stb_image("pattern.png");
+    //stb_image_t image = load_stb_image("pattern.png");
 /*
 for (int i=0 ; i<1000 ; i++)
 {
@@ -253,8 +262,10 @@ for (int i=0 ; i<1000 ; i++)
     std::cout << std::endl;
 */
 
-glEnable(GL_TEXTURE_2D);
+// glEnable(GL_TEXTURE_2D);
 
+
+/*
     // Create a texture to render to
     GLuint texture;
     glGenTextures(1, &texture);
@@ -270,6 +281,12 @@ glEnable(GL_TEXTURE_2D);
     // Upload the image data to the texture
     GLenum format = (image.channels == 3) ? GL_RGB : GL_RGBA;
     glTexImage2D(GL_TEXTURE_2D, 0, format, image.width, image.height, 0, format, GL_UNSIGNED_BYTE, image.data);
+*/
+
+
+/*
+	// SDL_Window* window = SDL_CreateWindow("Texture Loading Example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, xres, yres, 0);
+	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
 
 
 
@@ -277,11 +294,38 @@ glEnable(GL_TEXTURE_2D);
 
 
 
+    // Load PNG file as surface
+    SDL_Surface* surface = IMG_Load("pattern.png");
+
+    // Convert surface to texture
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+    // Free surface
+    SDL_FreeSurface(surface);
+
+    // Render texture
+    SDL_RenderCopy(renderer, texture, NULL, NULL);
+    SDL_RenderPresent(renderer);
+*/
 
 
 
 
 
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
+
+    // Load PNG file as surface
+    SDL_Surface* surface = IMG_Load("pattern.png");
+
+    // Convert surface to texture
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+    // Free surface
+    SDL_FreeSurface(surface);
+
+    // Render texture
+    SDL_RenderCopy(renderer, texture, NULL, NULL);
+    SDL_RenderPresent(renderer);
 
 
 bool running = true;
@@ -290,6 +334,7 @@ while (running)
     control_loop(running);
 
 
+/*
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
 
         GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -300,7 +345,7 @@ while (running)
 
         SDL_GL_SwapWindow(window);
         usleep(50000);
-
+*/
 
 
 /*
@@ -336,19 +381,24 @@ SDL_GL_SwapWindow(window);
 
 
     // Unbind the texture
-    glBindTexture(GL_TEXTURE_2D, 0);
+    // glBindTexture(GL_TEXTURE_2D, 0);
 
+/*
     // Release the image data
     stbi_image_free(image.data);
+*/
 
 
 
     // Render your scene to the texture
     //glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+/*
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+*/
     // ... render your scene ...
 
+/*
     // Read the pixel data from the texture
     unsigned char* pixels = new unsigned char[xres * yres * 4];
     glReadPixels(0, 0, xres, yres, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
@@ -358,9 +408,15 @@ SDL_GL_SwapWindow(window);
 
     // Clean up
     delete[] pixels;
-    glDeleteTextures(1, &texture);
+
+    // glDeleteTextures(1, &texture);
     glDeleteFramebuffers(1, &fbo);
-    SDL_GL_DeleteContext(context);
+*/
+
+    // Cleanup
+    SDL_DestroyTexture(texture);
+    SDL_DestroyRenderer(renderer);
+    //SDL_GL_DeleteContext(context);
     SDL_DestroyWindow(window);
     SDL_Quit();
 
