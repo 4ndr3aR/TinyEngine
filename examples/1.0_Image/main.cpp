@@ -5,7 +5,18 @@
 
 int main( int argc, char* args[] ) {
 
-	Tiny::window("Shader Effects Example", 1200, 800);
+        bool headless = false;
+
+	Tiny::window("Shader Effects Example", 1200, 800, headless);
+
+	/*
+        if (headless)
+                // Create a hidden window
+                window = SDL_CreateWindow ("Headless", 0, 0, xres, yres, SDL_WINDOW_HIDDEN | SDL_WINDOW_OPENGL);
+        else
+                window = SDL_CreateWindow ("Headless", 0, 0, xres, yres, SDL_WINDOW_FULLSCREEN | SDL_WINDOW_OPENGL);
+	*/
+
 
 	Tiny::event.handler = [](){ /* ... */ };
 
@@ -42,6 +53,8 @@ int main( int argc, char* args[] ) {
 
 	Tiny::loop([&](){
 		/* Absolutely Nothing! */
+		std::cout << "." << std::flush;
+		sleep(1);
 	});
 
 	Tiny::quit();
