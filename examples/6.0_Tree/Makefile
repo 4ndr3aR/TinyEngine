@@ -26,8 +26,16 @@ LF += -I/opt/homebrew/include -L/opt/homebrew/lib
 CC = g++-12 -std=c++17
 endif
 
-all: main.cpp
-			$(CC) $(EXTRA_FLAGS) main.cpp $(CF) $(LF) -lTinyEngine $(TINYLINK) -o main
+CPP_SRCS = $(shell find . -iname "*.cpp" | grep -v "/tests/")
+CPP_OBJS = $(patsubst %.cpp,%.o,$(CPP_SRCS))
+
+all: main.cpp $(CPP_SRCS)
+			$(CC) $(EXTRA_FLAGS) $(CPP_SRCS) $(CF) $(LF) -c
+			$(CC) $(EXTRA_FLAGS) $(CPP_OBJS) $(CF) $(LF) -lTinyEngine $(TINYLINK) -o main
+
+#all: main.cpp $(CPP_SRCS)
+#			$(CC) $(EXTRA_FLAGS) main.cpp $(CF) $(LF) -lTinyEngine $(TINYLINK) -o main
+
 
 DAT = shader			#data directory to embed
 .PHONY: embedded

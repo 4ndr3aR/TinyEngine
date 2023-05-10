@@ -5,14 +5,16 @@
 
 #define PI 3.14159265f
 
-#include "model.h"
-
 #include <random>
 
 #include <chrono>
 #include <ctime>
 #include <iomanip>
 #include <sstream>
+
+#include "model.h"
+
+#include "ffmpeg-utils.h"
 
 std::string curr_date_time(bool compact=true)
 {
@@ -39,6 +41,7 @@ int main( int argc, char* args[] )
 
         init_logging();
 
+	asdf();
         std::cout << "asdf" << std::endl;
 	Tiny::view.windowed = false;
 	Tiny::view.lineWidth = 1.0f;
