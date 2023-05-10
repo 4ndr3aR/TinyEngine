@@ -334,6 +334,8 @@ int main (int argc, char** argv)
 	while (running)
 	{
 		control_loop (running);
+		std::cout << "." << std::flush;
+		sleep(1);
 
 
 		/*
