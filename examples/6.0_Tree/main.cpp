@@ -36,7 +36,7 @@ std::string curr_date_time(bool compact=true)
 
 int main( int argc, char* args[] )
 {
-	bool headless = true;
+	bool headless = false;
 	int xres = 1920, yres = 1080;
 
         init_logging();
@@ -212,27 +212,16 @@ int main( int argc, char* args[] )
 
 
 
-        const int ffmpeg_w = 1200;
-        const int ffmpeg_h = 800;
+        int ffmpeg_w = xres;
+        int ffmpeg_h = yres;
 
-
-        std::string video_out = "/tmp/output-" + curr_date_time() + ".mp4";
+        std::string video_fn_out = "/tmp/output-" + curr_date_time() + ".mp4";
 
         // Create a vector to store the frames
         std::vector<unsigned char> pixels(ffmpeg_w * ffmpeg_h * 3);
 
-        // ffmpeg command to convert images to video
-        std::string ffmpeg_cmd = "ffmpeg -y -f rawvideo -pix_fmt rgb24 -s " + std::to_string(ffmpeg_w) + "x" + std::to_string(ffmpeg_h) + " -i - -vf vflip -f mp4 -codec:v libx264 -preset ultrafast -crf 23 -pix_fmt yuv420p " + video_out;
-
-        BOOST_LOG_TRIVIAL(info) << "Sending command line to ffmpeg: " << ffmpeg_cmd << std::endl;
-
-        // Create a pipe for ffmpeg
-        FILE *pipe = popen(ffmpeg_cmd.c_str(), "w");
-        if (!pipe)
-        {
-                std::cerr << "Error opening pipe to ffmpeg command" << std::endl;
-                return -1;
-        }
+	// Create a pipe for ffmpeg
+	auto pipe = ffmpeg_create_pipe(ffmpeg_w, ffmpeg_h, video_fn_out);
 
 	//Loop over Stuff
 	Tiny::loop([&]()
@@ -250,16 +239,8 @@ int main( int argc, char* args[] )
 
 		models.fill<glm::mat4>(leaves);
 
-                // Read the pixels from the framebuffer
-                glReadPixels(0, 0, ffmpeg_w, ffmpeg_h, GL_RGB, GL_UNSIGNED_BYTE, &pixels[0]);
-
-                BOOST_LOG_TRIVIAL(debug) << "writing bytes to ffmpeg: " << pixels.size() << std::endl;
-
-                // Write the pixels to the pipe
-                if (fwrite(pixels.data(), sizeof(unsigned char), pixels.size(), pipe) != pixels.size())
-                {
-                        std::cerr << "Error sending image buffer to ffmpeg" << std::endl;
-                }
+		capture_gl_image(pixels, ffmpeg_w, ffmpeg_h);
+		write_frame_to_ffmpeg(pixels, ffmpeg_w, ffmpeg_h, pipe);
 	});
 
         // Close the ffmpeg pipe
