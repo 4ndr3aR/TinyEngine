@@ -1,7 +1,6 @@
 #include <TinyEngine/TinyEngine>
 #include <TinyEngine/image>
 #include <TinyEngine/color>
-//#include <TinyEngine/helper>
 #include <TinyEngine/camera>
 
 #define PI 3.14159265f
@@ -219,11 +218,6 @@ int main( int argc, char* args[] )
         std::vector<unsigned char> pixels(ffmpeg_w * ffmpeg_h * 3);
 
         // ffmpeg command to convert images to video
-        //std::string ffmpeg_cmd = "ffmpeg -y -s " + std::to_string(ffmpeg_w) + "x" + std::to_string(ffmpeg_h) + " -pixel_format bgr24 -r 60 -f image2pipe -vcodec ppm -i - -vcodec libx264 -preset ultrafast -pix_fmt yuv420p -crf 1 -threads 0 -bf 0 " + std::string(video_out);
-        //std::string ffmpegCmd = "ffmpeg -f rawvideo -pix_fmt rgb24 -s 1200x800 -i - -f mpegts -codec:v mpeg1video -s 1200x800 -b:v 1000k -bf 0 -muxdelay 0.001 tcp://localhost:8080";
-        //std::string ffmpeg_cmd = "ffmpeg -f rawvideo -pix_fmt rgb24 -s 1200x800 -i - -f mp4 -codec:v libx264 -preset ultrafast -crf 23 -pix_fmt yuv420p output.mp4";
-        //std::string ffmpeg_cmd = "ffmpeg -y -f rawvideo -pix_fmt rgb24 -s 1200x800 -i - -vf transpose=2 -f mp4 -codec:v libx264 -preset ultrafast -crf 23 -pix_fmt yuv420p output.mp4";
-        //std::string ffmpeg_cmd = "ffmpeg -y -f rawvideo -pix_fmt rgb24 -s 1200x800 -i - -vf vflip -f mp4 -codec:v libx264 -preset ultrafast -crf 23 -pix_fmt yuv420p output.mp4";
         std::string ffmpeg_cmd = "ffmpeg -y -f rawvideo -pix_fmt rgb24 -s " + std::to_string(ffmpeg_w) + "x" + std::to_string(ffmpeg_h) + " -i - -vf vflip -f mp4 -codec:v libx264 -preset ultrafast -crf 23 -pix_fmt yuv420p " + video_out;
 
         BOOST_LOG_TRIVIAL(info) << "Sending command line to ffmpeg: " << ffmpeg_cmd << std::endl;
@@ -237,7 +231,8 @@ int main( int argc, char* args[] )
         }
 
 	//Loop over Stuff
-	Tiny::loop([&](){ /* ... */
+	Tiny::loop([&]()
+        {
 
 		if(autorotate)
 			cam::pan(0.1f);
@@ -257,11 +252,9 @@ int main( int argc, char* args[] )
                 BOOST_LOG_TRIVIAL(debug) << "writing bytes to ffmpeg: " << pixels.size() << std::endl;
 
                 // Write the pixels to the pipe
-                //fwrite(&pixels[0], sizeof(unsigned char), pixels.size(), pipe);
                 if (fwrite(pixels.data(), sizeof(unsigned char), pixels.size(), pipe) != pixels.size())
                 {
                         std::cerr << "Error sending image buffer to ffmpeg" << std::endl;
-                        //break;
                 }
 	});
 
