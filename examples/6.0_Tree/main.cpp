@@ -34,6 +34,9 @@ std::string curr_date_time(bool compact=true)
 
 int main( int argc, char* args[] )
 {
+	bool headless = true;
+	int xres = 1920, yres = 1080;
+
         init_logging();
 
         std::cout << "asdf" << std::endl;
@@ -43,9 +46,7 @@ int main( int argc, char* args[] )
         std::cout << "qwer" << std::endl;
 	Tiny::view.windowed = true;
 	Tiny::view.enabled = true;
-	Tiny::window("Procedural Tree", 1200, 800);
-	//Tiny::view.windowed = false;
-	//Tiny::view.enabled = false;
+	Tiny::window("Procedural Tree", xres, yres, headless);
         std::cout << "poiu" << std::endl;
 	cam::look = glm::vec3(0, 100, 0);
 	cam::far = 2000.0f;

@@ -7,7 +7,7 @@
 
 class View {
   public:
-    bool init(std::string windowName, int width, int height);
+    bool init(std::string windowName, int width, int height, bool headless);
     void quit();
     bool enabled = false;
 

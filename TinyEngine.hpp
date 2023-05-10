@@ -62,9 +62,10 @@ void sighandler(int signal){
   event.quit = true;
 }
 
-bool init(){
-
-  if( SDL_Init( SDL_INIT_VIDEO ) < 0 ){
+bool init()
+{
+  if (SDL_Init( SDL_INIT_VIDEO ) < 0)
+  {
     printf( "SDL could not initialize! Error: %s\n", SDL_GetError() );
     return false;
   }
@@ -76,12 +77,14 @@ bool init(){
   SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
   #endif
 
-  if( !( IMG_Init( IMG_INIT_PNG ) & IMG_INIT_PNG ) ){
+  if (!( IMG_Init( IMG_INIT_PNG ) & IMG_INIT_PNG ))
+  {
     printf( "SDL_Image could not initialize! Error: %s\n", IMG_GetError() );
     return false;
   }
 
-  if( TTF_Init() == -1 ){ //for some reason this is -1
+  if (TTF_Init() == -1)
+  { //for some reason this is -1
     printf( "SDL_ttf could not initialize! Error: %s\n", TTF_GetError() );
     return false;
   }
@@ -89,34 +92,35 @@ bool init(){
   signal(SIGINT, &sighandler);
 
   std::cout << "init() - view.windowed: " << view.windowed << std::endl;
-  if(!view.windowed && !view.init("TinyEngine OpenGL Context", 0, 0))   //Open a Dummy Window
+  if (!view.windowed && !view.init("TinyEngine OpenGL Context", 0, 0, false))   //Open a Dummy Window
   {
     std::cout<<"Failed to launch OpenGL Context"<<std::endl;
     return false;
   }
 
   return true;
-
 }
 
-bool window(std::string windowName, int width, int height)              // Open a window or a dummy one
+bool window(std::string windowName, int width, int height, bool headless)              // Open a window or a dummy one
 {
 
   // view.windowed = true;
   std::cout << "window() - view.windowed: " << view.windowed << std::endl;
 
-  if(!Tiny::init())
+  if (!Tiny::init())
     return false;
 
-  if(!view.init(windowName, width, height)){ //Start the View Class
+  if (!view.init(windowName, width, height, headless))
+  { //Start the View Class
     std::cout<<"Failed to launch visual interface."<<std::endl;
     return false;
   }
 
-  if(!audio.init()){ //Start the Audio Interface
+  if (!audio.init())
+  { //Start the Audio Interface
     std::cout<<"Failed to launch audio interface."<<std::endl;
 		return false;
-	}
+  }
 
   return true;
 }
