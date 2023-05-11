@@ -169,7 +169,7 @@ std::string to_0x_hex_str (int i)
 
 int main (int argc, char** argv)
 {
-	bool headless = true;
+	bool headless = false;
 	int xres = 1920;
 	int yres = 1080;
 
